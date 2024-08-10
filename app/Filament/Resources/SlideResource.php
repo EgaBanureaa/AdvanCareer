@@ -28,8 +28,11 @@ class SlideResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
+                    ->hint('Rekomended size: 1240px * 432px')
+                    ->hintColor('danger')
                     ->image()
                     ->required(),
+                    
             ]);
     }
 

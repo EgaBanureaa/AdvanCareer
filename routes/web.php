@@ -7,4 +7,4 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', [LandingController::class, 'index']);
+Route::get('/', [LandingController::class, 'index'])->name('landing');

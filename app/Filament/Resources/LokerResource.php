@@ -29,11 +29,13 @@ class LokerResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('thumbnail')
+                    ->hint('Recomended Size: 300px * 230px')
+                    ->hintColor('danger')
                     ->required(),
-                Forms\Components\Textarea::make('description')
+                Forms\Components\RichEditor::make('description')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Textarea::make('requirement')
+                Forms\Components\RichEditor::make('requirement')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('status')
