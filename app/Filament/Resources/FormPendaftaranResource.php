@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\FormPendaftaranResource\Pages;
-use App\Filament\Resources\FormPendaftaranResource\RelationManagers;
-use App\Models\FormPendaftaran;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\FormPendaftaran;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\FormPendaftaranResource\Pages;
+use App\Filament\Resources\FormPendaftaranResource\RelationManagers;
 
 class FormPendaftaranResource extends Resource
 {
@@ -47,17 +48,21 @@ class FormPendaftaranResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('loker.name')
+                    ->label('Posisi'),
                 Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('no_telp')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('loker_id')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('cv')
-                    ->searchable(),
+                    ->badge()
+                    ->color('danger')
+                    ->formatStateUsing(fn (string $state): string => "PDF")
+                    ->searchable()
+                    ->url(fn($record) => Storage::url($record->cv))
+                    ->openUrlInNewTab(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -75,8 +80,15 @@ class FormPendaftaranResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                    Tables\Actions\DeleteBulkAction::make()->after(function (Collection
+                    $records){
+                        foreach($records as $key => $value){
+                            if($value->cv){
+                                Storage::disk('public')->delete($value->cv);
+                            }
+                        }
+                    }),
+                    ]),
             ]);
     }
 

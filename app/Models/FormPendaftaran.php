@@ -15,9 +15,15 @@ class FormPendaftaran extends Model
     {
         parent::boot();
         static::updating(function($model){
-            if($model->isDirty('thumbnail') && ($model->getOriginal('thumbnail') !==null)){
-                Storage::disk('public')->delete($model->getOriginal('thumbnail'));
+            if($model->isDirty('cv') && ($model->getOriginal('cv') !==null)){
+                Storage::disk('public')->delete($model->getOriginal('cv'));
             }
         });
     }
+
+    public function loker()
+    {
+        return $this->belongsTo(Loker::class);
+    }
+
 }
